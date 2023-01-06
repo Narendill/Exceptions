@@ -30,6 +30,8 @@ public class FinalHW {
 
     }
 
+    // Метод запрашивает пользовательский ввод и проверяет корректность
+    // ввода по количеству значений.
     public static String[] getData() throws RuntimeException {
         Scanner sc = new Scanner(System.in);
         System.out.println("Input your Last Name, First Name, Father\'s Name, Day of Birth, Phone number and Gender:");
@@ -45,15 +47,13 @@ public class FinalHW {
     }
 
     // Предполагаем, что Фамилию, Имя и Отчество все таки пользователь ввел в нужном
-    // порядке,
-    // иначе если он ввел Имя-Фамилия-Отчество - невозможно понять что есть что.
-    // Индексация в списке: 0 - Фамилия, 1 - Имя, 2 - Отчетство, 3 - Дата рождения,
-    // 4 - Телефон, 5 - Пол.
+    // порядке, иначе если он ввел, например, Имя-Фамилия-Отчество - невозможно понять что есть что.
+    // Индексация в списке result: 0 - Фамилия, 1 - Имя, 2 - Отчетство, 3 - Дата рождения, 4 - Телефон, 5 - Пол.
     public static String[] parsData(String[] array) throws RuntimeException {
         String[] result = new String[array.length];
         String patternForDate = "(\\d{2})([.])(\\d{2})([.])(\\d{4})";
-        String patternForFIO = "([a-zA-zа-яА-Я]{2,})";
-        String patternForPhone = "(\\d{11})"; // пусть будет российский номер с 11 цифрами
+        String patternForFIO = "([a-zA-zа-яА-Я]{1,})";
+        String patternForPhone = "(\\d{11})"; // пусть будет российский номер строго с 11 цифрами
 
         for (int i = 0; i < array.length; i++) {
             if (array[i].toLowerCase().equals("m") || array[i].toLowerCase().equals("f")) {
@@ -62,8 +62,11 @@ public class FinalHW {
             if (Pattern.matches(patternForDate, array[i])) {
                 result[3] = array[i];
             }
+            // Хочется верить, что нет фамилий, имет и отчеств, состоящих из одной единственной
+            // буквы "m" или "f" :)
             if ((i <= array.length - 3) && Pattern.matches(patternForFIO, array[i])
-                    && Pattern.matches(patternForFIO, array[i + 1]) && Pattern.matches(patternForFIO, array[i + 2])) {
+                    && Pattern.matches(patternForFIO, array[i + 1]) && Pattern.matches(patternForFIO, array[i + 2])
+                    && array[i].toLowerCase() != "f" && array[i].toLowerCase() != "m") { 
                 result[0] = array[i];
                 result[1] = array[i + 1];
                 result[2] = array[i + 2];
@@ -80,7 +83,7 @@ public class FinalHW {
         if (result[4] == null)
             throw new RuntimeException("You entered an invalid Phone number (you had to enter 11 digits).");
         if (result[5] == null)
-            throw new RuntimeException("You entered an invalid Gender (it can be M or F).");
+            throw new RuntimeException("You entered an invalid Gender (it can be M/m or F/f).");
 
         return result;
     }
